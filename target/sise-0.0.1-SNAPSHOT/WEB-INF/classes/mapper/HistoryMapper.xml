@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.HistoryMapper">
+    <resultMap id="BaseResultMap" type="com.example.entity.HistoryEntity">
+        <id column="no" property="no"/>
+        <result column="userid" property="userid"/>
+        <result column="addname" property="addname"/>
+        <result column="addtype" property="addtype"/>
+        <result column="adddate" property="adddate"/>
+        <result column="addmark" property="addmark"/>
+        <result column="adddesc" property="adddesc"/>
+        <result column="addpath" property="addpath"/>
+    </resultMap>
+    <select id="getHistory" parameterType="String" resultMap="BaseResultMap">
+    select `no` AS no,`userid` AS userid,`addname` AS addname,`addtype` AS addtype,
+           `adddate` AS adddate,`addmark` AS addmark,`adddesc` AS adddesc,
+           `addpath` AS  addpath,`tag` AS tag
+    FROM addlist WHERE userid=#{userid}
+    </select>
+</mapper>

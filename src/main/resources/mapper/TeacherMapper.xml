@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.TeacherMapper">
+    <select id="getMonitor"  parameterType="String" resultType="com.example.entity.UserEntity">
+        select userid,Username,Gradename from user AS u LEFT OUTER JOIN grades AS g ON u.GradeId=g.GradeId
+        WHERE
+        (SELECT Deptid FROM grades WHERE(SELECT GradeId FROM `user` WHERE userid=#{userid})=GradeId)= Deptid
+        AND perms=1
+    </select>
+
+    <update id="add" parameterType="com.example.entity.UserEntity" >
+        update user
+        set perms = 1
+        where userid=#{form.userid} AND Username=#{form.username}
+    </update>
+
+    <update id="delete" parameterType="String">
+        update user
+        set perms =0
+        where userid=#{userid}
+    </update>
+</mapper>

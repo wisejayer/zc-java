@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.MonitorMapper">
+    <update id="update" parameterType="com.example.entity.FormEntity">
+        update addlist
+        set addname=#{form.addname},addtype=#{form.addtype},addmark=#{form.addmark},adddesc=#{form.adddesc}
+        where no=#{form.no}
+    </update>
+
+    <update id="pass" parameterType="Integer">
+        update addlist
+        set tag='是'
+        where no=#{no}
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from addlist where no=#{no}
+    </delete>
+
+    <select id="getGrade" parameterType="String" resultType="com.example.entity.GradeEntity">
+        select GradeId,Gradename from grades
+        where (select Deptid from grades where GradeId
+        =(select GradeId from user where user.userid=#{userid}))=
+        Deptid AND GradeId != Deptid;
+    </select>
+
+    <resultMap id="BaseResultMap" type="com.example.entity.CountEntity">
+        <id column="userid" property="userid" />
+        <result column="username" property="username" />
+        <result column="type1" property="type1" />
+        <result column="type2" property="type2" />
+        <result column="type3" property="type3" />
+        <result column="type4" property="type4" />
+        <result column="type5" property="type5" />
+        <result column="mark" property="mark" />
+    </resultMap>
+
+    <select id="getMark" parameterType="Integer" resultMap="BaseResultMap">
+        SELECT DISTINCT u.userid,u.username,
+
+                        IFNULL((SELECT SUM(addlist.addmark) FROM addlist WHERE addlist.addtype='专业技能' AND u.userid=addlist.userid),0)as 'type1',
+
+                        IFNULL((SELECT SUM(addlist.addmark) FROM addlist WHERE addlist.addtype='文体能力' AND u.userid=addlist.userid),0)as 'type2',
+
+                        IFNULL((SELECT SUM(addlist.addmark) FROM addlist WHERE addlist.addtype='创造能力' AND u.userid=addlist.userid),0)as 'type3',
+
+                        IFNULL((SELECT SUM(addlist.addmark) FROM addlist WHERE addlist.addtype='组织管理能力' AND u.userid=addlist.userid),0)as 'type4',
+
+                        IFNULL((SELECT SUM(addlist.addmark) FROM addlist WHERE addlist.addtype='社会实践能力' AND u.userid=addlist.userid),0)as 'type5',
+
+                        IFNULL((SELECT SUM(addlist.addmark) FROM addlist WHERE u.userid=addlist.userid),0)as 'mark'
+
+        FROM addlist AS list LEFT OUTER JOIN user AS u ON list.userid=u.userid WHERE u.GradeId=#{gradeid}
+    </select>
+
+</mapper>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.AddMapper">
+    <insert id="add" parameterType="com.example.entity.AddEntity" useGeneratedKeys="true" keyProperty="no">
+        insert into addlist(userid, addname, addtype, adddate, addmark, adddesc, addpath, tag)
+        values (#{userid},#{addname},#{addtype},#{adddate},#{addmark},#{adddesc},#{addpath},#{tag})
+    </insert>
+</mapper>

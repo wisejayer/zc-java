@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.NavMapper">
+
+<resultMap id="BaseResultMap" type="com.example.entity.NavEntity">
+    <id column="id" property="id" jdbcType="INTEGER"/>
+    <result column="path" property="path" jdbcType="VARCHAR"/>
+    <result column="component" property="component" javaType="java.lang.Object"/>
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+    <association property="meta" javaType="com.example.entity.NavMeta">
+        <result column="keepAlive" property="keepAlive"/>
+        <result column="requireAuth" property="requireAuth"/>
+    </association>
+    <collection property="children" ofType="com.example.entity.NavEntity">
+        <id column="id2" property="id"/>
+        <result column="path2" property="path" jdbcType="VARCHAR"/>
+        <result column="component2" property="component" jdbcType="VARCHAR"/>
+        <result column="name2" property="name" jdbcType="VARCHAR"/>
+        <association property="meta" javaType="com.example.entity.NavMeta">
+            <result column="keepAlive" property="keepAlive"/>
+            <result column="requireAuth" property="requireAuth"/>
+        </association>
+    </collection>
+</resultMap>
+<select id="getNav" parameterType="String" resultMap="BaseResultMap">
+        SELECT
+        m1.`id`,
+        m1.`path`,
+        m1.`component`,
+        m1.`name`,
+        m1.`keepAlive`,
+        m1.`requireAuth`,
+        m2.`component` AS component2,
+        m2.`name` AS name2,
+        m2.`path` AS path2,
+        m2.`keepAlive` AS keepAlive2,
+        m2.`requireAuth` AS requireAuth2
+        FROM
+        nav m1,
+        nav m2
+        WHERE
+        m1.`id` = m2.`parentId`
+        and (select perms from user where userid=#{userid}) >= m1.`perms`
+        and m2.`enabled`=true
+        order by m1.`id`,m2.`id`
+    </select>
+</mapper>

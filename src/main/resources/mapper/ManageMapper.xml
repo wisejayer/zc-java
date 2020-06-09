@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ManageMapper">
+    <select id="getStudent"  parameterType="String" resultType="com.example.entity.UserEntity">
+        select userid,Username,Gradename,Deptid from user AS u LEFT OUTER JOIN grades AS g ON u.GradeId=g.GradeId
+        WHERE Deptid=(SELECT Deptid FROM grades WHERE GradeId=(SELECT GradeId FROM user WHERE userid=#{userid}))
+          AND u.perms =0 OR u.perms = 1
+    </select>
+
+    <select id="getTeacher"  parameterType="String" resultType="com.example.entity.UserEntity">
+        select userid,Username,Gradename,Deptid from user AS u LEFT OUTER JOIN grades AS g ON u.GradeId=g.GradeId
+        WHERE Deptid=(SELECT Deptid FROM grades WHERE GradeId=(SELECT GradeId FROM user WHERE userid=#{userid}))
+          AND u.perms =10
+    </select>
+
+    <delete id="removeUser" parameterType="Long">
+        delete from user where userid=#{userid}
+    </delete>
+
+    <delete id="removeGrade" parameterType="Integer">
+        delete from grades where GradeId=#{gradeid}
+    </delete>
+
+    <insert id="addUser" parameterType="com.example.entity.UserEntity" >
+        insert into user(userid, username, gradeid, perms, password)
+        values (#{userid},#{username},#{gradeid},#{perms},'123456')
+    </insert>
+
+    <insert id="addGrade" parameterType="com.example.entity.GradeEntity" >
+        insert into grades(gradeid, Deptid, Gradename)
+        values (#{gradeid},#{deptid},#{gradename})
+    </insert>
+
+    <insert id="Import" parameterType="com.example.entity.ImpuserEntity" useGeneratedKeys="false">
+        insert into user
+        ( userid,Username,Password,GradeId,perms)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.userid},
+            #{item.username},
+            #{item.password},
+            #{item.gradeid},
+            '0'
+            )
+        </foreach>
+    </insert>
+</mapper>
